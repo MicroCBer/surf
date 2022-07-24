@@ -97,7 +97,7 @@ impl Middleware for Redirect {
             redirect_count += 1;
             let r: Request = req.clone();
             let res: Response = client.send(r).await?;
-            println!("1");
+            println!("1 {}",&res.status());
             if REDIRECT_CODES.contains(&res.status()) {
                 println!("2");
                 if let Some(location) = res.header(headers::LOCATION) {
