@@ -283,7 +283,7 @@ impl Response {
     /// ```
     pub async fn body_json<T: DeserializeOwned>(&mut self) -> crate::Result<T> {
         let body_bytes = self.body_bytes().await?;
-        serde_json::from_slice(&body_bytes).map_err(crate::Error::from)
+        Ok(serde_json::from_slice(&body_bytes).map_err(crate::Error::from)?)
     }
 
     /// Reads and deserialized the entire request body from form encoding.
