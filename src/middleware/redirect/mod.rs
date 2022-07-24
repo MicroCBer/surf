@@ -100,28 +100,23 @@ impl Middleware for Redirect {
             r = req.clone();
             res = client.send(r).await?;
 
-            println!("1 {}", &res.status());
             if REDIRECT_CODES.contains(&res.status()) {
-                println!("2");
                 if let Some(location) = res.header(headers::LOCATION) {
-                    println!("2");
                     let http_req: &mut http::Request = req.as_mut();
-                    println!("3 {:#?}", Url::parse(location.last().as_str()));
-                                *http_req.url_mut() = match Url::parse(location.last().as_str()) {
-                                    Ok(valid_url) => {
-                                        base_url = valid_url;
-                                        base_url.clone()
-                                    }
-                                    Err(e) => match e {
-                                        http::url::ParseError::RelativeUrlWithoutBase => {
-                                            base_url.join(location.last().as_str())?
-                                        }
-                                        e => return Err(e.into()),
-                                    },
-                                };
+                    *http_req.url_mut() = match Url::parse(location.last().as_str()) {
+                        Ok(valid_url) => {
+                            base_url = valid_url;
+                            base_url.clone()
+                        }
+                        Err(e) => match e {
+                            http::url::ParseError::RelativeUrlWithoutBase => {
+                                base_url.join(location.last().as_str())?
+                            }
+                            e => return Err(e.into()),
+                        },
+                    };
                 }
             } else {
-                println!("4");
                 break;
             }
         }
