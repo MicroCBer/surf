@@ -93,13 +93,13 @@ impl Middleware for Redirect {
 
         let mut base_url = req.url().clone();
 
-        // while redirect_count < self.attempts {
-        //     redirect_count += 1;
+        while redirect_count < self.attempts {
+             redirect_count += 1;
         let r: Request = req.clone();
         let res: Response = client.send(r).await?;
 
         //     println!("1 {}",&res.status());
-        //     if REDIRECT_CODES.contains(&res.status()) {
+             if REDIRECT_CODES.contains(&res.status()) {
         //         println!("2");
         //         if let Some(location) = res.header(headers::LOCATION) {
         //             let http_req: &mut http::Request = req.as_mut();
@@ -117,11 +117,11 @@ impl Middleware for Redirect {
         //                 },
         //             };
         //         }
-        //     } else {
-        //         println!("4");
-        //         break;
-        //     }
-        // }
+             } else {
+                 println!("4");
+                 break;
+             }
+         }
 
         Ok(next.run(req, client).await?)
     }
