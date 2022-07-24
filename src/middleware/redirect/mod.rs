@@ -93,33 +93,35 @@ impl Middleware for Redirect {
 
         let mut base_url = req.url().clone();
 
-        while redirect_count < self.attempts {
-            redirect_count += 1;
-            let r: Request = req.clone();
-            let res: Response = client.send(r).await?;
-            println!("1 {}",&res.status());
-            if REDIRECT_CODES.contains(&res.status()) {
-                println!("2");
-                if let Some(location) = res.header(headers::LOCATION) {
-                    let http_req: &mut http::Request = req.as_mut();
-                    println!("3 {:#?}",Url::parse(location.last().as_str()));
-                    *http_req.url_mut() = match Url::parse(location.last().as_str()) {
-                        Ok(valid_url) => {
-                            base_url = valid_url;
-                            base_url.clone()
-                        }
-                        Err(e) => match e {
-                            http::url::ParseError::RelativeUrlWithoutBase => {
-                                base_url.join(location.last().as_str())?
-                            }
-                            e => return Err(e.into()),
-                        },
-                    };
-                }
-            } else {
-                break;
-            }
-        }
+        // while redirect_count < self.attempts {
+        //     redirect_count += 1;
+        let r: Request = req.clone();
+        let res: Response = client.send(r).await?;
+
+        //     println!("1 {}",&res.status());
+        //     if REDIRECT_CODES.contains(&res.status()) {
+        //         println!("2");
+        //         if let Some(location) = res.header(headers::LOCATION) {
+        //             let http_req: &mut http::Request = req.as_mut();
+        //             println!("3 {:#?}",Url::parse(location.last().as_str()));
+        //             *http_req.url_mut() = match Url::parse(location.last().as_str()) {
+        //                 Ok(valid_url) => {
+        //                     base_url = valid_url;
+        //                     base_url.clone()
+        //                 }
+        //                 Err(e) => match e {
+        //                     http::url::ParseError::RelativeUrlWithoutBase => {
+        //                         base_url.join(location.last().as_str())?
+        //                     }
+        //                     e => return Err(e.into()),
+        //                 },
+        //             };
+        //         }
+        //     } else {
+        //         println!("4");
+        //         break;
+        //     }
+        // }
 
         Ok(next.run(req, client).await?)
     }
