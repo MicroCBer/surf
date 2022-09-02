@@ -23,7 +23,6 @@ default = ["curl-client", "middleware-logger", "encoding"]
 curl-client = ["http-client/curl_client", "once_cell", "default-client"]
 h1-client = [
     "http-client/h1_client",
-    "http-client/native-tls",
     "once_cell",
     "default-client",
     "async-native-tls",
